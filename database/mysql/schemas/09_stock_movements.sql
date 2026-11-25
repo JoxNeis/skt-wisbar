@@ -12,7 +12,8 @@ CREATE TABLE
                     _utf8mb4 'stock_movement',
                     _utf8mb4 'picking',
                     _utf8mb4 'put_away',
-                    _utf8mb4 'item_reclassification'
+                    _utf8mb4 'item_reclassification',
+                    _utf8mb4 'stock_reversal'
                 )
             )
         )
@@ -38,4 +39,4 @@ CREATE TABLE
         CONSTRAINT `fk_stock_movement_details_bin_inventory` FOREIGN KEY (`warehouse_bin_inventory_id`) REFERENCES `warehouse_bin_inventories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
         CONSTRAINT `fk_stock_movement_details_moved_by` FOREIGN KEY (`moved_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
         CONSTRAINT `ck_stock_movement_details_amount_positive` CHECK ((`amount` > 0))
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'CTI subtype of transactions, CTI parent of picking_details and put_away_details: stock into or out of a bin inventory';
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'CTI subtype of transactions, CTI parent of picking_details, put_away_details and stock_reversal_details: stock into or out of a bin inventory';

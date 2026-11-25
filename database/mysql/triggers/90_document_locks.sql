@@ -417,6 +417,34 @@ BEGIN
 END$$
 DELIMITER ;
 
+DROP TRIGGER IF EXISTS `trg_stock_reversals_lock_before_update`;
+DELIMITER $$
+CREATE TRIGGER `trg_stock_reversals_lock_before_update`
+BEFORE UPDATE ON `stock_reversals`
+FOR EACH ROW
+BEGIN
+    IF `fn_transaction_header_is_locked`(OLD.`id`)
+       AND NOT (NEW.`id` <=> OLD.`id`
+               AND NEW.`transaction_header_type` <=> OLD.`transaction_header_type`
+               AND NEW.`reversed_transaction_header_id` <=> OLD.`reversed_transaction_header_id`
+               AND NEW.`reversed_header_type` <=> OLD.`reversed_header_type`) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'stock_reversals: the document is signed and read-only';
+    END IF;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `trg_stock_reversals_lock_before_delete`;
+DELIMITER $$
+CREATE TRIGGER `trg_stock_reversals_lock_before_delete`
+BEFORE DELETE ON `stock_reversals`
+FOR EACH ROW
+BEGIN
+    IF `fn_transaction_header_is_locked`(OLD.`id`) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'stock_reversals: the document is signed and read-only';
+    END IF;
+END$$
+DELIMITER ;
+
 -- Line subtypes (id = transactions.id)
 
 DROP TRIGGER IF EXISTS `trg_stock_movement_details_lock_before_update`;
@@ -820,6 +848,36 @@ FOR EACH ROW
 BEGIN
     IF `fn_transaction_is_locked`(OLD.`id`) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'put_away_details: the document is signed and read-only';
+    END IF;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `trg_stock_reversal_details_lock_before_update`;
+DELIMITER $$
+CREATE TRIGGER `trg_stock_reversal_details_lock_before_update`
+BEFORE UPDATE ON `stock_reversal_details`
+FOR EACH ROW
+BEGIN
+    IF `fn_transaction_is_locked`(OLD.`id`)
+       AND NOT (NEW.`id` <=> OLD.`id`
+               AND NEW.`transaction_type` <=> OLD.`transaction_type`
+               AND NEW.`transaction_header_type` <=> OLD.`transaction_header_type`
+               AND NEW.`stock_reversal_id` <=> OLD.`stock_reversal_id`
+               AND NEW.`reversed_transaction_header_id` <=> OLD.`reversed_transaction_header_id`
+               AND NEW.`reverses_stock_movement_detail_id` <=> OLD.`reverses_stock_movement_detail_id`) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'stock_reversal_details: the document is signed and read-only';
+    END IF;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `trg_stock_reversal_details_lock_before_delete`;
+DELIMITER $$
+CREATE TRIGGER `trg_stock_reversal_details_lock_before_delete`
+BEFORE DELETE ON `stock_reversal_details`
+FOR EACH ROW
+BEGIN
+    IF `fn_transaction_is_locked`(OLD.`id`) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'stock_reversal_details: the document is signed and read-only';
     END IF;
 END$$
 DELIMITER ;

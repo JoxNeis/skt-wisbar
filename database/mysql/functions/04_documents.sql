@@ -55,6 +55,7 @@ BEGIN
             WHEN 'stock_movement_detail' THEN `p_transaction_header_type` IN ('stock_movement', 'item_reclassification')
             WHEN 'picking_detail' THEN `p_transaction_header_type` = 'picking'
             WHEN 'put_away_detail' THEN `p_transaction_header_type` = 'put_away'
+            WHEN 'stock_reversal_detail' THEN `p_transaction_header_type` = 'stock_reversal'
             WHEN 'handover_detail' THEN `p_transaction_header_type` = 'handover'
             WHEN 'incoming_detail' THEN `p_transaction_header_type` = 'incoming'
             WHEN 'weighing' THEN `p_transaction_header_type` = 'incoming'

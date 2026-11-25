@@ -129,6 +129,10 @@ BEGIN
         RETURN IF(`p_type` = 'out', NULL, 'stock_movement_details: a picking line must be out');
     END IF;
 
+    IF `p_transaction_type` = 'stock_reversal_detail' AND `p_transaction_header_type` = 'stock_reversal' THEN
+        RETURN NULL;
+    END IF;
+
     IF `p_transaction_type` = 'put_away_detail' AND `p_transaction_header_type` = 'put_away' THEN
         RETURN IF(`p_type` = 'in', NULL, 'stock_movement_details: a put-away line must be in');
     END IF;
